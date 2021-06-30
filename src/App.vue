@@ -21,8 +21,19 @@ export default {
 </script>
 
 <style>
+@font-face {
+  font-family: "Nimbus Sans Becker";
+  src: local("Nimbus Sans Becker"),
+  url(assets/fonts/Nimbus-Sans-Becker-PBla-Regular.otf) format("opentype");
+}
+h1{
+  font-family: "Nimbus Sans Becker", sans-serif;
+  font-size: 400%;
+  margin: 21px;
+}
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", sans-serif;
+  font-size: 150%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

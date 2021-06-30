@@ -1,8 +1,7 @@
 <template>
   <div :class="{'shake' : animated}" >
     <p v-long-press="1000" @long-press-start="onLongPressStart" @long-press-stop="onLongPressStop"
-          v-bind:style="{color: crossedOff ? offColor : onColor,
-          textDecoration: crossedOff ? 'line-through':'',
+          v-bind:style="{textDecoration: isDisplayed ? 'line-through':'',
           color: '#6F9B8A',
           textAlign: 'center'}"
           v-on:click="toogleItem">
@@ -20,32 +19,27 @@ export default {
   },
   props:{
     toodText: String,
+    isDisplayed: Boolean,
   },
   data(){
     return {
-      crossedOff: false,
-      onColor: 'black',
-      offColor: 'gray',
-      altText: 'click me',
       animated: false,
-      isDisplayed: true,
       longClick: false,
     }
   },
   methods:{
     toogleItem: function (){
-      this.crossedOff = ! this.crossedOff;
-      console.log("test");
+      this.isDisplayed= ! this.isDisplayed;
+      this.$emit('changeStatus', this.toodText);
     },
     onLongPressStop: function (){
-      console.log("long end");
       if(this.longClick) {
         this.$emit('toodGet', this.toodText);
       }
       this.longClick = false;
     },
     onLongPressStart: function (){
-      console.log("Beg")
+      console.log("Long beg")
       this.longClick = true;
       this.animated = true
       setTimeout(() => {

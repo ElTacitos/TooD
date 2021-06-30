@@ -2,7 +2,8 @@
   <div>
     <div id="list">
       <li v-for="todo in todos" :key="todo">
-        <tood-item v-bind:tood-text="todo" v-on:toodGet="toodReturn"/>
+        <tood-item v-bind:tood-text="todo.text" v-bind:isDisplayed="todo.status"
+                   v-on:toodGet="toodReturn" v-on:changeStatus="toodChangeStatus"/>
       </li>
     </div>
     <input v-if="displayInput" v-model="newTood" v-on:keyup.enter="validate()" placeholder="New Tood">
@@ -12,39 +13,58 @@
 
 <script>
 import ToodItem from "@/components/ToodItem";
+
 export default {
   name: "ToDoList",
   components: {ToodItem},
   data() {
     return {
       todos: [
-        'Click on the plus to add a Tood',
-        'Click on a Tood to cross it',
-        'Long click a Tood to delete it',
+        {text: 'Click on the plus to add a Tood', status: false},
+        {text: 'Click on a Tood to cross it', status: false},
+        {text: 'Long click a Tood to delete it', status: false},
       ],
       newTood: '',
       displayInput: false,
       displayButton: true,
     }
   },
-
   methods: {
     newItem: function (){
       this.displayInput = true;
       this.displayButton = false;
     },
     validate: function (){
-      this.todos.push(this.newTood);
+      this.todos.push({text: this.newTood, status: false});
       this.newTood = '';
       this.displayInput = false;
       this.displayButton = true;
+      this.saveTood();
     },
     toodReturn: function (toodToDel){
-      console.log(toodToDel);
-      console.log(this.todos.indexOf(toodToDel));
-      this.$delete(this.todos, this.todos.indexOf(toodToDel));
+      this.$delete(this.todos, this.todos.findIndex(tood => tood.text === toodToDel));
+      this.saveTood();
+    },
+    toodChangeStatus: function (toodToChange){
+      const index = this.todos.findIndex(tood => tood.text === toodToChange);
+      if(index !== -1){
+        this.todos[index] = {text: this.todos[index].text, status: !this.todos[index].status};
+        this.saveTood();
+      }
+    },
+    saveTood(){
+      localStorage.setItem('todos', JSON.stringify(this.todos));
     }
-  }
+  },
+  mounted() {
+    if(localStorage.getItem('todos')){
+      try {
+        this.todos = JSON.parse(localStorage.getItem('todos'))
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  },
 }
 </script>
 
@@ -58,10 +78,12 @@ div {
 
 button{
   width: 30%;
+  max-width: 200px;
   background-color: #ACAAB1;
   border-style: none;
   border-radius: 8px 8px 8px 8px;
   font-weight: bolder;
+  font-size: 50px;
   color: #8C8A93;
 }
 input{
@@ -78,22 +100,22 @@ li{
   border-radius: 12px;
   margin-bottom: 21.440px;
   width: 75%;
+  max-width: 500px;
+  font-size: 30px;
 }
 
 input{
   background-color: transparent;
   border-style: solid;
   border-radius: 8px;
-}
-input{
-  background-color: transparent;
-  border-style: solid;
-  border-radius: 4px;
-  color: #6c6c6c;
+  width: 75%;
+  max-width: 500px;
+  font-size: 30px;
+  color: #92B4A7;
 }
 
 input:focus{
-  color:  #6c6c6c;
+  color: #92B4A7;
   border-color: #6c6c6c;
 }
 
