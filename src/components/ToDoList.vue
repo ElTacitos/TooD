@@ -25,6 +25,7 @@ export default {
         {text: 'Long click a Tood to delete it', status: false},
       ],
       newTood: '',
+      nbNonCrossedTood: 3,
       displayInput: false,
       displayButton: true,
     }
@@ -41,14 +42,30 @@ export default {
       this.displayButton = true;
       this.saveTood();
     },
-    toodReturn: function (toodToDel){
-      this.$delete(this.todos, this.todos.findIndex(tood => tood.text === toodToDel));
+    toodReturn: function (textToDel){
+      const index = this.todos.findIndex(tood => tood.text === textToDel);
+      if(!this.todos[index].status)
+        this.nbNonCrossedTood--;
+
+      this.$delete(this.todos, this.todos.findIndex(tood => tood.text === textToDel));
       this.saveTood();
     },
     toodChangeStatus: function (toodToChange){
       const index = this.todos.findIndex(tood => tood.text === toodToChange);
       if(index !== -1){
         this.todos[index] = {text: this.todos[index].text, status: !this.todos[index].status};
+        if(this.todos[index].status == true){
+          const crossedTood = this.todos[index];
+          this.$delete(this.todos, index);
+          this.todos.push(crossedTood);
+          this.nbNonCrossedTood--;
+        }
+        else{
+          const notCrossed = this.todos[index];
+          this.$delete(this.todos, index);
+          this.todos.splice(this.nbNonCrossedTood, 0, notCrossed);
+          this.nbNonCrossedTood++;
+        }
         this.saveTood();
       }
     },
@@ -60,6 +77,9 @@ export default {
     if(localStorage.getItem('todos')){
       try {
         this.todos = JSON.parse(localStorage.getItem('todos'))
+        this.nbNonCrossedTood = 0;
+        this.todos.forEach((tood) => {if(tood.status===false) {this.nbNonCrossedTood++;}});
+        console.log(this.nbNonCrossedTood);
       } catch (e) {
         console.log(e);
       }
