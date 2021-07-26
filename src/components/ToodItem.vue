@@ -19,39 +19,40 @@
 <script>
     import LongPress from "vue-directive-long-press";
     export default {
-        name: "ToodItem",
-        directives: {
-            "long-press": LongPress,
-        },
-        props: {
-            toodText: String,
-            isDisplayed: Boolean,
-        },
         data() {
             return {
                 animated: false,
                 longClick: false,
             };
         },
+        directives: {
+            "long-press": LongPress,
+        },
         methods: {
-            toogleItem: function () {
-                this.isDisplayed = !this.isDisplayed;
-                this.$emit("changeStatus", this.toodText);
+            onLongPressStart() {
+                console.log("Long beg");
+                this.longClick = true;
+                this.animated = true;
+                const ANIMATION_TIMEOUT = 1000;
+                setTimeout(() => {
+                    this.animated = false;
+                }, ANIMATION_TIMEOUT);
             },
-            onLongPressStop: function () {
+            onLongPressStop() {
                 if (this.longClick) {
                     this.$emit("toodGet", this.toodText);
                 }
                 this.longClick = false;
             },
-            onLongPressStart: function () {
-                console.log("Long beg");
-                this.longClick = true;
-                this.animated = true;
-                setTimeout(() => {
-                    this.animated = false;
-                }, 1000);
+            toogleItem() {
+                this.isDisplayed = !this.isDisplayed;
+                this.$emit("changeStatus", this.toodText);
             },
+        },
+        name: "ToodItem",
+        props: {
+            isDisplayed: Boolean,
+            toodText: String,
         },
     };
 </script>

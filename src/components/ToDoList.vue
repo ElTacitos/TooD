@@ -24,38 +24,62 @@
     import ToodItem from "@/components/ToodItem";
 
     export default {
-        name: "ToDoList",
-        components: { ToodItem },
+        components: {
+            "tood-item": ToodItem,
+        },
         data() {
+            const DEFAULT_NB = 3;
+
             return {
-                todos: [
-                    { text: "Click on the plus to add a Tood", status: false },
-                    { text: "Click on a Tood to cross it", status: false },
-                    { text: "Long click a Tood to delete it", status: false },
-                ],
-                newTood: "",
-                nbNonCrossedTood: 3,
-                displayInput: false,
                 displayButton: true,
+                displayInput: false,
+                nbNonCrossedTood: DEFAULT_NB,
+                newTood: "",
+                todos: [
+                    { status: false, text: "Click on the plus to add a Tood" },
+                    { status: false, text: "Click on a Tood to cross it" },
+                    { status: false, text: "Long click a Tood to delete it" },
+                ],
             };
         },
         methods: {
-            newItem: function () {
+            newItem() {
                 this.displayInput = true;
                 this.displayButton = false;
             },
-            validate: function () {
-                this.todos.push({ text: this.newTood, status: false });
-                this.newTood = "";
-                this.displayInput = false;
-                this.displayButton = true;
-                this.saveTood();
+            saveTood() {
+                localStorage.setItem("todos", JSON.stringify(this.todos));
             },
-            toodReturn: function (textToDel) {
+            toodChangeStatus(toodToChange) {
+                const index = this.todos.findIndex(
+                    (tood) => tood.text === toodToChange
+                );
+                if (index !== -1) {
+                    this.todos[index] = {
+                        status: !this.todos[index].status,
+                        text: this.todos[index].text,
+                    };
+                    if (this.todos[index].status === true) {
+                        const crossedTood = this.todos[index];
+                        this.$delete(this.todos, index);
+                        this.todos.push(crossedTood);
+                        this.nbNonCrossedTood -= 1;
+                    } else {
+                        const notCrossed = this.todos[index];
+                        this.$delete(this.todos, index);
+                        this.todos.splice(this.nbNonCrossedTood, 0, notCrossed);
+                        this.nbNonCrossedTood += 1;
+                    }
+                    this.saveTood();
+                }
+            },
+            toodReturn(textToDel) {
                 const index = this.todos.findIndex(
                     (tood) => tood.text === textToDel
                 );
-                if (!this.todos[index].status) this.nbNonCrossedTood--;
+                if (!this.todos[index].status) {
+                    this.nbNonCrossedTood -= 1;
+                }
 
                 this.$delete(
                     this.todos,
@@ -63,31 +87,12 @@
                 );
                 this.saveTood();
             },
-            toodChangeStatus: function (toodToChange) {
-                const index = this.todos.findIndex(
-                    (tood) => tood.text === toodToChange
-                );
-                if (index !== -1) {
-                    this.todos[index] = {
-                        text: this.todos[index].text,
-                        status: !this.todos[index].status,
-                    };
-                    if (this.todos[index].status == true) {
-                        const crossedTood = this.todos[index];
-                        this.$delete(this.todos, index);
-                        this.todos.push(crossedTood);
-                        this.nbNonCrossedTood--;
-                    } else {
-                        const notCrossed = this.todos[index];
-                        this.$delete(this.todos, index);
-                        this.todos.splice(this.nbNonCrossedTood, 0, notCrossed);
-                        this.nbNonCrossedTood++;
-                    }
-                    this.saveTood();
-                }
-            },
-            saveTood() {
-                localStorage.setItem("todos", JSON.stringify(this.todos));
+            validate() {
+                this.todos.push({ status: false, text: this.newTood });
+                this.newTood = "";
+                this.displayInput = false;
+                this.displayButton = true;
+                this.saveTood();
             },
         },
         mounted() {
@@ -97,15 +102,16 @@
                     this.nbNonCrossedTood = 0;
                     this.todos.forEach((tood) => {
                         if (tood.status === false) {
-                            this.nbNonCrossedTood++;
+                            this.nbNonCrossedTood += 1;
                         }
                     });
                     console.log(this.nbNonCrossedTood);
-                } catch (e) {
-                    console.log(e);
+                } catch (error) {
+                    console.log(error);
                 }
             }
         },
+        name: "ToDoList",
     };
 </script>
 

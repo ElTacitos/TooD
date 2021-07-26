@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <h1>TOOD</h1>
-        <ToDoList />
+        <to-do-list />
     </div>
 </template>
 
@@ -9,13 +9,13 @@
     import ToDoList from "@/components/ToDoList";
 
     export default {
-        name: "App",
         components: {
-            ToDoList,
+            "to-do-list": ToDoList,
         },
         created() {
             document.body.style.backgroundColor = "#8C8A93";
         },
+        name: "App",
     };
 </script>
 
