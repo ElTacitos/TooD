@@ -1,25 +1,24 @@
 <template>
     <div id="app">
         <h1>TOOD</h1>
-        <to-do-list />
+        <to-do-list></to-do-list>
     </div>
 </template>
 
-<script>
-    import ToDoList from "@/components/ToDoList";
+<script lang="ts">
+    import toDoList from "@/components/toDoList.vue";
+    import { Component, Vue } from "vue-property-decorator";
 
-    export default {
-        components: {
-            "to-do-list": ToDoList,
-        },
-        created() {
-            document.body.style.backgroundColor = "#8C8A93";
-        },
-        name: "App",
-    };
+    @Component({
+        components: { toDoList },
+    })
+    export default class App extends Vue {}
 </script>
 
 <style>
+    body {
+        background-color: #8c8a93;
+    }
     @font-face {
         font-family: "Nimbus Sans Becker";
         src: local("Nimbus Sans Becker"),

@@ -16,45 +16,54 @@
     </div>
 </template>
 
-<script>
-    import LongPress from "vue-directive-long-press";
-    export default {
-        data() {
-            return {
-                animated: false,
-                longClick: false,
-            };
-        },
-        directives: {
-            "long-press": LongPress,
-        },
-        methods: {
-            onLongPressStart() {
-                console.log("Long beg");
-                this.longClick = true;
-                this.animated = true;
-                const ANIMATION_TIMEOUT = 1000;
-                setTimeout(() => {
-                    this.animated = false;
-                }, ANIMATION_TIMEOUT);
-            },
-            onLongPressStop() {
-                if (this.longClick) {
-                    this.$emit("toodGet", this.toodText);
-                }
-                this.longClick = false;
-            },
-            toogleItem() {
-                this.isDisplayed = !this.isDisplayed;
-                this.$emit("changeStatus", this.toodText);
-            },
-        },
-        name: "ToodItem",
+<script lang="ts">
+    // Import LongPress from "vue-directive-long-press";
+    import { Component, Prop, Vue } from "vue-property-decorator";
+
+    @Component({
+        /*
+         *Directives: {
+         *  "long-press": LongPress,
+         *},
+         */
+
         props: {
-            isDisplayed: Boolean,
-            toodText: String,
+            isDisplayed: {
+                type: Boolean,
+            },
+            toodText: {
+                type: String,
+            },
         },
-    };
+    })
+    export default class ToodItem extends Vue {
+        @Prop(Boolean) protected isDisplayed!: boolean;
+        @Prop(String) protected toodText!: string;
+
+        protected animated = false;
+        protected longClick = false;
+
+        protected onLongPressStart(): void {
+            this.longClick = true;
+            this.animated = true;
+            const ANIMATION_TIMEOUT = 1000;
+            setTimeout((): void => {
+                this.animated = false;
+            }, ANIMATION_TIMEOUT);
+        }
+
+        protected onLongPressStop(): void {
+            if (this.longClick) {
+                this.$emit("toodGet", this.toodText);
+            }
+            this.longClick = false;
+        }
+
+        protected toogleItem(): void {
+            this.isDisplayed = !this.isDisplayed;
+            this.$emit("changeStatus", this.toodText);
+        }
+    }
 </script>
 
 <style scoped>
