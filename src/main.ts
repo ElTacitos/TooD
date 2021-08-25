@@ -1,8 +1,11 @@
 import App from "./App.vue";
-import Vue from "vue";
+import LongPress from "vue-directive-long-press";
+import Vue, { VNode } from "vue";
 
 Vue.config.productionTip = false;
 
+Vue.directive("long-press", LongPress);
+
 new Vue({
-    render: (render) => render(App),
+    render: (render): VNode => render(App),
 }).$mount("#app");

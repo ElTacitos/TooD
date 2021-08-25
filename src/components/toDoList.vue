@@ -21,6 +21,7 @@
 </template>
 
 <script lang="ts">
+    import { IItem } from "@/interface";
     import toodItem from "@/components/toodItem.vue";
     import { Component, Vue } from "vue-property-decorator";
 
@@ -34,7 +35,7 @@
         protected displayInput = false;
         protected nbNonCrossedTood = DEFAULT_NB;
         protected newTood = "";
-        protected todos: { status: boolean; text: string }[] = [
+        protected todos: IItem[] = [
             { status: false, text: "Click on the plus to add a Tood" },
             { status: false, text: "Click on a Tood to cross it" },
             { status: false, text: "Long click a Tood to delete it" },
@@ -45,7 +46,8 @@
                 try {
                     const JSON_STRING = localStorage.getItem("todos");
                     if (JSON_STRING !== null) {
-                        this.todos = JSON.parse(JSON_STRING);
+                        // Cast must be done only if control are made to ensure object content
+                        this.todos = JSON.parse(JSON_STRING) as IItem[];
                     }
                     this.nbNonCrossedTood = 0;
                     this.todos.forEach((tood): void => {
